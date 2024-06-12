@@ -1,0 +1,2 @@
+this is a random file!
+i am trying to convert all text characters to lowercase... will it work?
