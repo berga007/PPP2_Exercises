@@ -2,7 +2,7 @@
 # Compiling Programs with Makefiles from the url:
 # https://www.fltk.org/doc-1.3/basics.html#basics_makefile
 
-TARGET = exercise_13
+TARGET = exercise_14
 CODEDIRS = ../GUI
 
 # CXX		 = clang++ -std=c++17
