@@ -509,19 +509,72 @@ Right_triangle::Right_triangle(Point p1, Point p2, Point p3)
     int inner_2{inner_product(p2p3, p1p3)};
     int inner_3{inner_product(p1p2, p1p3)};
 
+    /* 
+    if (inner_1!=0 && inner_2!=0 && inner_3!=0){
+        error("Points given do not form a right triangle");
+    }
+    */
+
+    add(p1);
+    add(p2);
+    add(p3);
+
+    // compute the norm of the vectors
+    float d1_2(sqrt(pow(p1p2.x, 2) + pow(p1p2.y, 2)));
+    float d2_3(sqrt(pow(p2p3.x, 2) + pow(p2p3.y, 2)));
+    float d1_3(sqrt(pow(p1p3.x, 2) + pow(p1p3.y, 2)));
+
+    // sort the distances in ascending order
+    vector<float> dis{d1_2, d2_3, d1_3};
+    sort(dis.begin(), dis.end());
+
+    // smallest distance is the height
+    h = dis[0];
+
+    // next is the base
+    b = dis[1];
+
 }
 
 
 //------------------------------------------------------------------------------
-
+int Right_triangle::base() const{
+    return b;
+}
 
 
 //------------------------------------------------------------------------------
-
+int Right_triangle::height() const{
+    return h;
+}
 
 
 //------------------------------------------------------------------------------
+void Right_triangle::draw_lines() const{
+    
+    if (fill_color().visibility()) {
+        fl_color(fill_color().as_int());
+        fl_begin_complex_polygon();
+        for(int i=0; i<number_of_points(); ++i){
+            fl_vertex(point(i).x, point(i).y);
+        }
+        fl_end_complex_polygon();
+        fl_color(color().as_int());    // reset color
+    }
 
+    if (color().visibility())
+        Shape::draw_lines();
+
+    if (2<number_of_points() && color().visibility()) {
+        fl_line(point(number_of_points()-1).x,
+            point(number_of_points()-1).y,
+            point(0).x,
+            point(0).y);
+    }
+}
+
+
+//------------------------------------------------------------------------------
 void Open_polyline::draw_lines() const
 {
     if (fill_color().visibility()) {

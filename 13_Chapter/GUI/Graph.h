@@ -495,7 +495,8 @@ struct Right_triangle : Shape {
     int height() const;
     void draw_lines() const;
 private:
-    
+    int b;
+    int h;
 };
 
 //------------------------------------------------------------------------------
