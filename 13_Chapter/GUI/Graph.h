@@ -430,10 +430,11 @@ struct Polygon : Closed_polyline {    // closed sequence of non-intersecting lin
 
 //------------------------------------------------------------------------------
 
-struct Poly : Polygon { // like Polygon, but check if Polygon in constructor
-    Poly(vector<Point> ps);
+struct Poly : Polygon { // like Polygon, but check invariant in constructor
+    Poly(initializer_list<Point> lst);
     void add(Point p);
     void draw_lines() const;
+    
 };
 
 //------------------------------------------------------------------------------
@@ -471,20 +472,14 @@ private:
 
 //------------------------------------------------------------------------------
 
-struct Star : Regular_polygon {
-    Star(Point cc, int nn, int rr);
+struct Star: Regular_polygon{
+    Star(Point xy, int nn, int ss, int step_vertices);
+    void draw_lines() const;
+    void set_step(int step);
+    int step() const{ return st;}
 
-    void draw_lines() const { Regular_polygon::draw_lines(); }
-    Point center() const { return point(0); }
-    int radius() const { return rad; }
-    int n_arms() const { return n; }
-
-    void set_radius(int rr) { set_points(center(),n,rr); }
-private:
-    int rad;    // distance from arm tip to center
-    int n;      // number of arms;
-    void set_points(Point xy, int nn, int rr);
-    void move_points();
+    private:
+        int st;
 };
 
 //------------------------------------------------------------------------------

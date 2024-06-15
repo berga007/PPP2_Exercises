@@ -28,12 +28,6 @@ try{
         // vector between point 1 and 2
         Point p1p2{p2.x-p1.x, p2.y-p1.y};
 
-        // the norm
-        float norm_p1p2(sqrt(pow(p1p2.x, 2) + pow(p1p2.y, 2)));
-
-        // unit vector
-        Point unit_p1p2(round(p1p2.x/norm_p1p2), round(p1p2.y/norm_p1p2));
-
         // middle point
         Point p3(round(p1.x + 0.5*p1p2.x), round(p1.y + 0.5*p1p2.y));
 

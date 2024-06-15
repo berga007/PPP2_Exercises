@@ -1,4 +1,3 @@
-
 //
 // This is a GUI support code to the chapters 12-16 of the book
 // "Programming -- Principles and Practice Using C++" by Bjarne Stroustrup
@@ -324,10 +323,9 @@ void Polygon::draw_lines() const
 
 //------------------------------------------------------------------------------
 
-Poly::Poly(vector<Point> ps)
+Poly::Poly(initializer_list<Point> lst)
 {
-    for (int i = 0; i<ps.size(); ++i)
-        add(ps[i]);
+    for(Point p:lst) add(p);
 }
 
 //------------------------------------------------------------------------------
@@ -460,30 +458,49 @@ void Regular_polygon::draw_lines() const{
 
 //------------------------------------------------------------------------------
 
-Star::Star(Point cc, int nn, int rr)
-    :Regular_polygon(cc,2*nn,rr) { move_points(); }
+Star::Star(Point xy, int nn, int ss, int step)
+    :Regular_polygon(xy, nn, ss), st{step}{}
+
 
 //------------------------------------------------------------------------------
 
-void Star::set_points(Point xy, int nn, int rr)
-{
-    // Regular_polygon::set_points(xy,2*nn,rr);
-    move_points();
+void Star::set_step(int s){
+    st = s;
 }
 
 //------------------------------------------------------------------------------
 
-// move every second point 50% closer to the center
-void Star::move_points()
-{
-    for (int i = 1; i<number_of_points(); i+=2) {
-        set_point(
-            i,Point(round((center().x+point(i).x)/2),round((center().y+point(i).y)/2)));
+void Star::draw_lines() const{
+    /*
+    Points are not connected sequentially like regular polygons.
+    Here point 0 will be connected to point step, and point step
+    to 2*step. If this is higher than the total number of points, 
+    we wrap around 0 and continue. This cycle is similar to the way
+    we sum hours. 10h00 a.m + 3 == 1 p.m
+    We stop when we reach point 0 again. 
+    */
+    if (fill_color().visibility()) {
+        fl_color(fill_color().as_int());
+        fl_begin_complex_polygon();
+        for(int i=0; i<number_of_points(); ++i){
+            fl_vertex(point((st*i)%number_of_points()).x, point((st*i)%number_of_points()).y);
+        }
+        fl_end_complex_polygon();
+        fl_color(color().as_int());    // reset color
+    }
+
+    if (color().visibility()){
+        for(int i=0; i<number_of_points(); ++i){
+            fl_line(
+                point((st*i)%number_of_points()).x, 
+                point((st*i)%number_of_points()).y,
+                point((st*(i+1))%number_of_points()).x, 
+                point((st*(i+1))%number_of_points()).y);
+        }
     }
 }
 
 //------------------------------------------------------------------------------
-
 int inner_product(Point p1, Point p2)
 {
     return p1.x*p2.x+p1.y*p2.y;
