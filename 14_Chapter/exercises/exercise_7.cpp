@@ -1,4 +1,4 @@
-// Exercise 19 from Chapter 13 of the book:
+// Exercise 7 from Chapter 14 of the book:
 // Programming: Principles and Practice Using C++ by Bjarne Stroustrup
 
 // Author: Bernardo Alves
@@ -6,20 +6,25 @@
 #include <iostream>
 #include "../../GUI/Simple_window.h"  // get access to our windows lbrary
 #include "../../GUI/Graph.h"          // get access to our graphics library facilities
-
 int main()
 try{
-    const Point tl{100, 100};
-    Simple_window win{tl, 500, 500, "Exercise 19"};
+    Point tl{100, 100};
+    Simple_window win{tl, 500, 500, "Exercise 7"};
 
-    Star s{Point{250, 250}, 7, 200, 2};
-    s.set_color(Color::black);
-    win.attach(s);
+    Striped_closed_polyline strips{};
+    strips.add(Point{20, 40});
+    strips.add(Point{20, 240});
+    strips.add(Point{120, 240});
+
+    strips.set_fill_color(Color::blue);
+
+    win.attach(strips);
+
     win.wait_for_button();
-    
+   
 }
 catch(exception& e){
-    std::cerr << e.what();
+
 }
 catch(...){
 

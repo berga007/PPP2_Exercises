@@ -1,4 +1,4 @@
-// Exercise 19 from Chapter 13 of the book:
+// Exercise 4 from Chapter 14 of the book:
 // Programming: Principles and Practice Using C++ by Bjarne Stroustrup
 
 // Author: Bernardo Alves
@@ -9,18 +9,21 @@
 
 int main()
 try{
-    const Point tl{100, 100};
-    Simple_window win{tl, 500, 500, "Exercise 19"};
+    Point tl{100, 100};
+    Simple_window win{tl, 500, 500, "Exercise 4"};
 
-    Star s{Point{250, 250}, 7, 200, 2};
-    s.set_color(Color::black);
-    win.attach(s);
+    Immobile_Circle c1{Point{250, 250}, 100};
+
+    win.attach(c1);
+
     win.wait_for_button();
-    
+
+    // c1.move(10, 10);
 }
 catch(exception& e){
-    std::cerr << e.what();
+
 }
-catch(...){
+catch(...)
+{
 
 }
