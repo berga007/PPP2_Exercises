@@ -1,4 +1,4 @@
-// Exercise 19 from Chapter 13 of the book:
+// Exercise 5 from Chapter 14 of the book:
 // Programming: Principles and Practice Using C++ by Bjarne Stroustrup
 
 // Author: Bernardo Alves
@@ -9,18 +9,21 @@
 
 int main()
 try{
-    const Point tl{100, 100};
-    Simple_window win{tl, 500, 500, "Exercise 19"};
+    Point tl{100, 100};
+    Simple_window win{tl, 500, 500, "Exercise 5"};
 
-    Star s{Point{250, 250}, 7, 200, 2};
-    s.set_color(Color::black);
-    win.attach(s);
+    Striped_rectangle r1{Point{35, 35}, 40, 25};
+    r1.set_fill_color(Color::blue);
+
+    win.attach(r1);
+
     win.wait_for_button();
-    
 }
-catch(exception& e){
-    std::cerr << e.what();
+catch(exception& e)
+{
+
 }
-catch(...){
+catch(...)
+{
 
 }

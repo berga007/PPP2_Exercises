@@ -1,4 +1,4 @@
-// Exercise 19 from Chapter 13 of the book:
+// Exercise 11 from Chapter 14 of the book:
 // Programming: Principles and Practice Using C++ by Bjarne Stroustrup
 
 // Author: Bernardo Alves
@@ -9,14 +9,17 @@
 
 int main()
 try{
-    const Point tl{100, 100};
-    Simple_window win{tl, 500, 500, "Exercise 19"};
+    Point tl{200, 200};
+    Simple_window win{tl, 500, 500, "Exercise 11"};
 
-    Star s{Point{250, 250}, 7, 200, 2};
-    s.set_color(Color::black);
-    win.attach(s);
+    Binary_tree btree{Point{250, 50}, 4, "da"};
+    btree.set_fill_color(Color::black);
+
+    btree.set_node_label("lll", "Test");
+
+    win.attach(btree);
+
     win.wait_for_button();
-    
 }
 catch(exception& e){
     std::cerr << e.what();
