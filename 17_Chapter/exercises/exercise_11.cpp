@@ -68,7 +68,7 @@ Link* Link::erase()    // remove *p from list; return p's sucessor
 }
 
 //------------------------------------------------------------------------------
-Link* Link::find(const std::string & s)   // find s in list; return nullptr
+Link* Link::find(const std::string& s)   // find s in list; return nullptr
                                           // for not found
 {
     Link* p = this;

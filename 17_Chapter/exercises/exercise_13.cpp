@@ -22,6 +22,15 @@ struct God{
     std::string weapon{};
 };
 
+// overloading the output operator for god struct
+std::ostream& operator<<(std::ostream& os, const God& g)
+{
+    os << "Name: " << g.name << " Mythology: " << g.mythology
+       << " Vehicle: " << g.vehicle << " Weapon: " << g.weapon;
+    
+    return os;
+}
+
 //------------------------------------------------------------------------------
 // doubly linked list
 class Link{
@@ -82,12 +91,12 @@ Link* Link::erase()    // remove *p from list; return p's sucessor
 }
 
 //------------------------------------------------------------------------------
-Link* Link::find(const std::string & s)   // find s in list; return nullptr
+Link* Link::find(const std::string& s)   // find s in list; return nullptr
                                           // for not found
 {
     Link* p = this;
     while(p) {
-        if(p->value.name == s) return p;
+        if(p->value.name==s) return p;
         p = p->succ;
     }
     return nullptr;
@@ -98,11 +107,12 @@ const Link* Link::find(const std::string& s) const
 {
     const Link* p = this;
     while(p) {
-        if(p->value.name == s) return p;
+        if(p->value.name==s) return p;
         p = p->succ;
     }
     return nullptr;
 }
+
 //------------------------------------------------------------------------------
 Link* Link::advance(int n)   // move n positions in list
                              // return nullptr for not found
@@ -127,44 +137,74 @@ Link* Link::advance(int n)   // move n positions in list
 
 //------------------------------------------------------------------------------
 Link* Link::add_ordered(Link* n){
-    // pre-conditions: 
-    // list is already ordered lexicographically just a like a language dictio.
-    
-    // find the 1st element in the list
-    Link* p = this;
-    while(p){
-        Link* temp = p->previous();
-        if(temp) 
-            p = temp;
-        else{
-            break;
-        }
+    // add elements lexicographically from lowest to highest like a language
+    // dictionary
+    // return pointer to 1st element of the list
+
+    if(n==nullptr) return this;
+
+    // if list is empty simply point to the link given (n)
+    // set n's successor and predecessor to nullptr
+    if(this==nullptr){
+        n->prev = nullptr;
+        n->succ = nullptr;
+        return n;
     }
 
-    while(n->value.name > p->value.name){
+    Link* p = this;
+
+    // 1st element changes
+    if(n->value.name < value.name){
+        return insert(n);
+    }
+
+    while(n->value.name >= p->value.name){
+        // we reached the end of the list
+        if(p->succ == nullptr){
+            p->add(n);
+            return this;
+        }
         p = p->succ;
     }
 
-    // insert n before p, return n
-    return p->insert(n);
+    // insert n before p
+    p->insert(n);
+    return this;
 }
+
 //------------------------------------------------------------------------------
 template<typename T> void print_element(T t, const int& width)
 {
     std::cout << std::left << std::setw(width) << std::setfill(' ') << t;
 }
+
 //------------------------------------------------------------------------------
 void print_all(Link* p)
 {
     std::cout << "{\n";
     while(p) {
-        std::cout << "Name: " << p->value.name << ' '
-                  << "Mythology: " << p->value.mythology << ' '
-                  << "Vehicle: " << p->value.vehicle << ' '
-                  << "Weapon: " << p->value.weapon << '\n';
-        p=p->previous();
+        std::cout << p->value << '\n';
+        p=p->next();
     }
     std::cout << "}";
+}
+
+//------------------------------------------------------------------------------
+Link* extract(Link* p, const std::string& s)
+// extract god with name s from p
+// erases p from the list
+// returs a pointer to p
+{
+    Link* nl = p->find(s);
+    if(nl){
+        if(nl==p && p->next()) p = p->next();
+        else p = nullptr;
+        nl->erase();
+        return nl;
+    }
+    else{
+        return nullptr;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -174,60 +214,49 @@ try
     // start with the norse god Freia
     Link* gods = new Link{God{"Freia", "Norse", "", ""}};
     // add Odin after Freia
-    gods = gods->add(new Link{God{"Odin", "Norse", 
-                                               "Eight-legged flying horse", 
-                                               "Spear called Gungnir"}});
+    gods = gods->insert(new Link{God{"Odin", "Norse", "Eight-legged flying horse", "Spear called Gungnir"}});
     // add Thor after Odin
-    gods = gods->add(new Link{God{"Thor", "Norse", "", "Mjölnir"}});
+    gods = gods->insert(new Link{God{"Thor", "Norse", "", "Mjölnir"}});
 
     // now add greek gods
-    gods = gods->add(new Link{God{"Zeus", "Greek", "", "Thunder"}});
-    gods = gods->add(new Link{God{"Poseidon", "Greek", "", "Trident"}});
-    gods = gods->add(new Link{God{"Ares", "Greek", "", ""}});
-    gods = gods->add(new Link{God{"Athena", "Greek", "", ""}});
+    gods = gods->insert(new Link{God{"Zeus", "Greek", "", "Lightning"}});
+    gods = gods->insert(new Link{God{"Poseidon", "Greek", "", "Trident"}});
+    gods = gods->insert(new Link{God{"Ares", "Greek", "", ""}});
+    gods = gods->insert(new Link{God{"Athena", "Greek", "", ""}});
 
     // finally some Roman gods
-    gods = gods->add(new Link{God{"Jupiter", "Roman", "", "Thunder"}});
-    gods = gods->add(new Link{God{"Neptune", "Roman", "", "Trident"}});
-    gods = gods->add(new Link{God{"Venus", "Roman", "", ""}});
-    gods = gods->add(new Link{God{"Mars", "Roman", "", ""}});
+    gods = gods->insert(new Link{God{"Jupiter", "Roman", "", "Thunder"}});
+    gods = gods->insert(new Link{God{"Neptune", "Roman", "", "Trident"}});
+    gods = gods->insert(new Link{God{"Venus", "Roman", "", ""}});
+    gods = gods->insert(new Link{God{"Mars", "Roman", "", ""}});
+
+    print_all(gods);
+
+    std::cout << '\n';
 
     // build one ordered list for each mythology
-    Link* norse_gods{};
+    
+    Link* norse_gods = nullptr;
+
+    // find and extract from one list to another
     std::vector<std::string> nords{"Freia", "Odin", "Thor"};
     for(std::string word:nords){
-        Link* p = gods->find(word);
-        if(p){
-            if(p==gods) gods = p->next();
-            p->erase();
-            norse_gods->add_ordered(p);
-        
-        }
-    }
-    
-    Link* greek_gods{};
-    std::vector<std::string> greeks{"Zeus", "Poseidon", "Ares", "Athena"};
-    for(std::string w:greeks){
-        Link* p = gods->find(w);
-        if(p){
-            if(p==gods) gods = p->next();
-            p->erase();
-            greek_gods->add_ordered(p);
-        }
+        norse_gods = norse_gods->add_ordered(extract(gods, word));
     }
 
-    Link* roman_gods{};
-    std::vector<std::string> romans{"Jupiter", "Neptune", "Venus", "Mars"};
-    for(std::string w:romans){
-        Link* p = gods->find(w);
-        if(p){
-            if(p==gods) gods = p->next();
-            p->erase();
-            roman_gods->add_ordered(p);
-        }
+    Link* greek_gods = nullptr;
+    std::vector<std::string> greeks{"Zeus", "Poseidon", "Ares", "Athena"};
+    for(std::string w:greeks){
+        greek_gods = greek_gods->add_ordered(extract(gods, w));
     }
     
-    print_all(gods);
+    Link* roman_gods = nullptr;
+    std::vector<std::string> romans{"Jupiter", "Neptune", "Venus", "Mars"};
+    for(std::string w:romans){
+        roman_gods = roman_gods->add_ordered(extract(gods, w));
+    }
+
+    print_all(norse_gods);
     return 0;
 }
 catch(std::exception& e){
